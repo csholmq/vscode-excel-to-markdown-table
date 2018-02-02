@@ -1,0 +1,40 @@
+{
+    "name": "excel-to-markdown-table",
+    "displayName": "Excel to Markdown table",
+    "description": "Copy Excel data and convert to Markdown table format",
+    "version": "0.0.1",
+    "publisher": "csholmq",
+    "engines": {
+        "vscode": "^1.19.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "onLanguage:markdown"
+    ],
+    "main": "./out/extension",
+    "contributes": {
+        "keybindings": [{
+            "key": "ctrl+v",
+            "command": "extension.excelToMarkdown",
+            "title": "Excel to Markdown table format"
+        }]
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "postinstall": "node ./node_modules/vscode/bin/install",
+        "test": "npm run compile && node ./node_modules/vscode/bin/test"
+    },
+    "devDependencies": {
+        "typescript": "^2.5.3",
+        "vscode": "^1.1.5",
+        "@types/node": "^7.0.43",
+        "@types/mocha": "^2.2.42"
+    },
+    "dependencies": {
+        "copy-paste": "^1.3.0"
+    }
+}
