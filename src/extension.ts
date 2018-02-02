@@ -75,7 +75,6 @@ function excelToMarkdown(err, rawData) {
         return "| " + row.map(function (column, index) {
             return column + Array(columnWidths[index] - column.length + 1).join(" ")
         }).join(" | ") + " |"
-        row.map
 
     })
     markdownRows.splice(1, 0, "|" + columnWidths.map(function (width, index) {
