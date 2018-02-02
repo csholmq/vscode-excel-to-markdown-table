@@ -4,6 +4,9 @@
     "description": "Copy Excel data and convert to Markdown table format",
     "version": "0.0.1",
     "publisher": "csholmq",
+    "repository": {
+        "url": "https://github.com/csholmq/vscode-excel-to-markdown-table"
+    },
     "engines": {
         "vscode": "^1.19.0"
     },
