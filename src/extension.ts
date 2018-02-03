@@ -46,7 +46,7 @@ function looksLikeTable(data) {
         prevLen = row.length
     });
     
-    isTable = data.length > 1 && isTable
+    isTable = data.length > 1 && data[0].length > 1 && isTable
 
     return isTable
 }
