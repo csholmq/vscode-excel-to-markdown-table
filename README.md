@@ -10,10 +10,4 @@ This extension depends on npm package `copy-paste`.
 
 ## Known Issues
 
-* The extension tries to format all text, not just Excel data.
-
-## Release Notes
-
-### 0.0.1
-
-Initial (very dirty) proof of concept
+* Not very well tested.
