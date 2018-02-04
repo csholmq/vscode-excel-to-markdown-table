@@ -41,12 +41,11 @@ function looksLikeTable(data) {
     let isTable = true
     let prevLen = data[0].length
     
+    // Ensure all rows have the same number of columns
     data.forEach(row => {
         isTable = (row.length == prevLen) && isTable
         prevLen = row.length
     });
-    
-    isTable = data.length > 1 && data[0].length > 1 && isTable
 
     return isTable
 }
@@ -54,7 +53,9 @@ function looksLikeTable(data) {
 function excelToMarkdown(rawData) {
     let data = rawData.trim()
     
+    // Split rows on newline
     var rows = data.split((/[\n\u0085\u2028\u2029]|\r\n?/g)).map(function (row) {
+        // Split columns on tab
         return row.split("\t")
     })
     
@@ -80,6 +81,7 @@ function excelToMarkdown(rawData) {
         rows[0][columnIndex] = column
         return columnWidth(rows, columnIndex)
     })
+    
     var markdownRows = rows.map(function (row, rowIndex) {
         // | Name         | Title | Email Address  |
         // |--------------|-------|----------------|
@@ -91,6 +93,7 @@ function excelToMarkdown(rawData) {
         }).join(" | ") + " |"
         
     })
+
     markdownRows.splice(1, 0, "|" + columnWidths.map(function (width, index) {
         var prefix = ""
         var postfix = ""

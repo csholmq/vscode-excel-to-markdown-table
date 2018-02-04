@@ -1,6 +1,11 @@
 # Change Log
 All notable changes to the "excel-to-markdown-table" extension will be documented in this file.
 
+## [0.3.0] - 2018-02-04
+- Added extension command
+- Added keyboard shortcut
+- Removed minimum table size constraints
+
 ## [0.2.0] - 2018-02-03
 - Fixed versioning
 - Now only considers data with >1 columns as a table
