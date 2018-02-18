@@ -1,6 +1,9 @@
 # Change Log
 All notable changes to the "excel-to-markdown-table" extension will be documented in this file.
 
+## [0.3.1] - 2018-02-18
+- Clarified readme as to when the extension is activated
+
 ## [0.3.0] - 2018-02-04
 - Added extension command
 - Added keyboard shortcut

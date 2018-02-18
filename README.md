@@ -8,9 +8,7 @@ Optionally align columns by prepending the headers with `^[lcr]` for left, cente
 
 Based on https://github.com/thisdavej/copy-excel-paste-markdown and the work of @jonmagic and @thisdavej
 
-## Requirements
-
-This extension depends on npm package `copy-paste`.
+Extension is only first activated when editing a Markdown document.
 
 ## Known Issues
 
