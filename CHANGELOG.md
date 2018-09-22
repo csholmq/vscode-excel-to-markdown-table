@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to the "excel-to-markdown-table" extension will be documented in this file.
 
+## [1.0.0] - 2018-09-22
+- Fixes bug with trailing null cell (@deshorsley)
+- Partial test coverage in place (@deshorsley)
+
 ## [0.3.1] - 2018-02-18
 - Clarified readme as to when the extension is activated
 
