@@ -25,8 +25,22 @@ suite("Extension Tests", () => {
         assert.deepEqual(myExtension.splitIntoRowsAndColumns("first\tsecond\r\nnew\trow"),[["first","second"],["new","row"]]);
     });
 
+    test("addMarkdownSyntax", () => {
+        assert.equal(myExtension.addMarkdownSyntax([["test"]], [4]), "| test |");
+    });
+
+    test("addAligmnetSyntax", () => {
+        assert.deepEqual(myExtension.addAlignmentSyntax(["test"], [5], []), [ 'test', '|-------|' ]);
+    });
+
     test("excelToMarkdown", () => {
-        assert.equal(myExtension.excelToMarkdown("test").markdownData, "| test |\n|------|");
-        assert.equal(myExtension.excelToMarkdown("one\ttwo\r\nthree").markdownData,"| one   | two |\n|-------|-----|\n| three |");
+        assert.equal(myExtension.excelToMarkdown("test"), "| test |\n|------|");
+        assert.equal(myExtension.excelToMarkdown("one\ttwo\r\nthree"),"| one   | two |\n|-------|-----|\n| three |");
+    });
+
+    test("excelToMarkdown - Alignment", () => {
+        assert.equal(myExtension.excelToMarkdown("^rtest"), "| test |\n|-----:|");
+        assert.equal(myExtension.excelToMarkdown("^ctest"), "| test |\n|:----:|");
+        assert.equal(myExtension.excelToMarkdown("^ltest"), "| test |\n|------|");
     });
 });
