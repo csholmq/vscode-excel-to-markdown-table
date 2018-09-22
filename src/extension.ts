@@ -3,44 +3,54 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 
+export interface excelToMarkDownObj {
+    isTable: boolean,
+    markdownData: string|null
+};
+
 export function activate(context: vscode.ExtensionContext) {
-    console.log('Congratulations, your extension "excel-to-markdown-table" is now active!');
-    
     var disposable = vscode.commands.registerCommand('extension.excelToMarkdown', () => {
         let clipboard = require("copy-paste");
-        
-        let rawData = clipboard.paste();
-        let paste = excelToMarkdown(rawData);
 
-        if(paste.isTable) {
-            // Copy formatted data to clipboard before calling normal paste action
-            // Afterwards, replace clipboard data with original content
-            clipboard.copy(paste.markdownData, function () {
-                vscode.commands.executeCommand('editor.action.clipboardPasteAction')
-                clipboard.copy(rawData)
-            })        
-        } else {
-            vscode.commands.executeCommand('editor.action.clipboardPasteAction');
-        }
+        clipboard.paste(function(err, val) {
+            pasteText(val);
+        });
     });
 
     context.subscriptions.push(disposable);
+}
+
+function pasteText(rawData: string) {
+    let clipboard = require("copy-paste");
+    let paste = excelToMarkdown(rawData);
+
+    if(paste.isTable) {
+        // Copy formatted data to clipboard before calling normal paste action
+        // Afterwards, replace clipboard data with original content
+        clipboard.copy(paste.markdownData, function () {
+            console.info(`Pasting: ${paste.markdownData}`);
+            vscode.commands.executeCommand('editor.action.clipboardPasteAction')
+            clipboard.copy(rawData)
+        })
+    } else {
+        vscode.commands.executeCommand('editor.action.clipboardPasteAction');
+    }
 }
 
 // this method is called when your extension is deactivated
 export function deactivate() {
 }
 
-function columnWidth(rows, columnIndex) {
+export function columnWidth(rows: string[][], columnIndex: number) {
     return Math.max.apply(null, rows.map(function (row) {
         return row[columnIndex].length
     }))
 }
 
-function looksLikeTable(data) {
+function looksLikeTable(data):boolean {
     let isTable = true
     let prevLen = data[0].length
-    
+
     // Ensure all rows have the same number of columns
     data.forEach(row => {
         isTable = (row.length == prevLen) && isTable
@@ -50,20 +60,28 @@ function looksLikeTable(data) {
     return isTable
 }
 
-function excelToMarkdown(rawData) {
+/**
+ *
+ * @param rawData
+ * If isTable returns false, markdownData will be empty
+ */
+function excelToMarkdown(rawData: string): excelToMarkDownObj {
     let data = rawData.trim()
-    
+    const UNI_NEXT_LINE = '\u0085';
+    const UNI_LINE_SEPARATOR = '\u2028';
+    const UNI_PARAGRAPH_SEPARATOR = `\u2029`;
+    const regexStr = `/[\n${UNI_NEXT_LINE}${UNI_LINE_SEPARATOR}${UNI_PARAGRAPH_SEPARATOR}]|\r\n?/g`;
     // Split rows on newline
-    var rows = data.split((/[\n\u0085\u2028\u2029]|\r\n?/g)).map(function (row) {
+    var rows = data.split((regexStr)).map(function (row) {
         // Split columns on tab
         return row.split("\t")
     })
-    
-    if(!looksLikeTable(rows)) 
-        return { isTable: false }
-    
+
+    if(!looksLikeTable(rows))
+        return { isTable: false, markdownData: null }
+
     var colAlignments = []
-    
+
     var columnWidths = rows[0].map(function (column, columnIndex) {
         var alignment = "l"
         var re = /^(\^[lcr])/i
@@ -81,7 +99,7 @@ function excelToMarkdown(rawData) {
         rows[0][columnIndex] = column
         return columnWidth(rows, columnIndex)
     })
-    
+
     var markdownRows = rows.map(function (row, rowIndex) {
         // | Name         | Title | Email Address  |
         // |--------------|-------|----------------|
@@ -91,7 +109,7 @@ function excelToMarkdown(rawData) {
         return "| " + row.map(function (column, index) {
             return column + Array(columnWidths[index] - column.length + 1).join(" ")
         }).join(" | ") + " |"
-        
+
     })
 
     markdownRows.splice(1, 0, "|" + columnWidths.map(function (width, index) {
@@ -109,7 +127,7 @@ function excelToMarkdown(rawData) {
         }
         return prefix + Array(columnWidths[index] + 3 - adjust).join("-") + postfix
     }).join("|") + "|")
-    
+
     return {
         isTable: true,
         markdownData: markdownRows.join("\n")
