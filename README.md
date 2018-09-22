@@ -10,6 +10,8 @@ Based on https://github.com/thisdavej/copy-excel-paste-markdown and the work of 
 
 Extension is only first activated when editing a Markdown document.
 
-## Known Issues
+## Contributors
+* @deshorsley for bug fix and test coverage!
 
-* Not very well tested.
+## Known Issues
+* Does not handle newlines within cells
