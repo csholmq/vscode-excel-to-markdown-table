@@ -14,9 +14,10 @@ import * as myExtension from '../extension';
 // Defines a Mocha test suite to group tests of similar kind together
 suite("Extension Tests", () => {
 
-    // Defines a Mocha unit test
-    test("Something 1", () => {
-        assert.equal(-1, [1, 2, 3].indexOf(5));
-        assert.equal(-1, [1, 2, 3].indexOf(0));
+    test("columnWidth", () => {
+        const row = [["first", "second"]];
+
+        assert.equal(myExtension.columnWidth(row, 0), 5);
+        assert.equal(myExtension.columnWidth(row, 1), 6);
     });
 });
