@@ -3,6 +3,10 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 
+const ALIGNED_LEFT = "l";
+const ALIGNED_RIGHT = "r";
+const ALIGHED_CENTER = "c";
+
 export interface excelToMarkDownObj {
     isTable: boolean,
     markdownData: string|null
@@ -43,21 +47,8 @@ export function deactivate() {
 
 export function columnWidth(rows: string[][], columnIndex: number) {
     return Math.max.apply(null, rows.map(function (row) {
-        return row[columnIndex].length
+        return (row[columnIndex] && row[columnIndex].length) || 0;
     }))
-}
-
-function looksLikeTable(data):boolean {
-    let isTable = true
-    let prevLen = data[0].length
-
-    // Ensure all rows have the same number of columns
-    data.forEach(row => {
-        isTable = (row.length == prevLen) && isTable
-        prevLen = row.length
-    });
-
-    return isTable
 }
 
 /**
@@ -65,40 +56,13 @@ function looksLikeTable(data):boolean {
  * @param rawData
  * If isTable returns false, markdownData will be empty
  */
-function excelToMarkdown(rawData: string): excelToMarkDownObj {
+export function excelToMarkdown(rawData: string): excelToMarkDownObj {
     let data = rawData.trim()
-    const UNI_NEXT_LINE = '\u0085';
-    const UNI_LINE_SEPARATOR = '\u2028';
-    const UNI_PARAGRAPH_SEPARATOR = `\u2029`;
-    const regexStr = `/[\n${UNI_NEXT_LINE}${UNI_LINE_SEPARATOR}${UNI_PARAGRAPH_SEPARATOR}]|\r\n?/g`;
-    // Split rows on newline
-    var rows = data.split((regexStr)).map(function (row) {
-        // Split columns on tab
-        return row.split("\t")
-    })
+    var rows = splitIntoRowsAndColumns(data);
 
-    if(!looksLikeTable(rows))
-        return { isTable: false, markdownData: null }
+    var colAlignments = [];
 
-    var colAlignments = []
-
-    var columnWidths = rows[0].map(function (column, columnIndex) {
-        var alignment = "l"
-        var re = /^(\^[lcr])/i
-        var m = column.match(re)
-        if (m) {
-            var align = m[1][1].toLowerCase()
-            if (align === "c") {
-                alignment = "c"
-            } else if (align === "r") {
-                alignment = "r"
-            }
-        }
-        colAlignments.push(alignment)
-        column = column.replace(re, "")
-        rows[0][columnIndex] = column
-        return columnWidth(rows, columnIndex)
-    })
+    var columnWidths = getColumnWidths(rows, colAlignments)
 
     var markdownRows = rows.map(function (row, rowIndex) {
         // | Name         | Title | Email Address  |
@@ -133,3 +97,41 @@ function excelToMarkdown(rawData: string): excelToMarkDownObj {
         markdownData: markdownRows.join("\n")
     }
 }
+
+function getColumnWidths(rows: string[][], colAlignments: any[]) {
+    return rows[0].map(function (column, columnIndex) {
+        var alignment = ALIGNED_LEFT;
+        var re = /^(\^[lcr])/i;
+        var m = column.match(re);
+
+        if (m) {
+            var align = m[1][1].toLowerCase();
+            if (align === ALIGHED_CENTER) {
+                alignment = ALIGHED_CENTER;
+            }
+            else if (align === ALIGNED_RIGHT) {
+                alignment = ALIGNED_RIGHT;
+            }
+        }
+
+        colAlignments.push(alignment);
+        column = column.replace(re, "");
+        rows[0][columnIndex] = column;
+        return columnWidth(rows, columnIndex);
+    });
+}
+
+export function splitIntoRowsAndColumns(data: string):string[][] {
+    // UNI_NEXT_LINE = '\u0085'
+    // UNI_LINE_SEPARATOR = '\u2028'
+    // UNI_PARAGRAPH_SEPARATOR = `\u2029`
+
+    // Split rows on newline
+    var rows = data.split((/[\n\u0085\u2028\u2029]|\r\n?/g)).map(function (row) {
+        // Split columns on tab
+        return row.split("\t");
+    });
+
+    return rows;
+}
+
