@@ -8,7 +8,7 @@ Optionally align columns by prepending the headers with `^[lcr]` for left, cente
 
 Based on https://github.com/thisdavej/copy-excel-paste-markdown and the work of @jonmagic and @thisdavej
 
-Extension is only first activated when editing a Markdown document.
+Extension is only first activated when editing a Markdown document. You will need to change the language setting in VS Code to use 'markdown' to enable this extension.
 
 ## Contributors
 * @deshorsley for bug fix and test coverage!
