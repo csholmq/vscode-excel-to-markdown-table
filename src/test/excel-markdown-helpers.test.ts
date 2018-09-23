@@ -24,7 +24,7 @@ suite('Helper Tests', () => {
 
 
     suite("addMarkdownSyntax", () => {
-        
+
         test('should generate header for single column', () => {
             assert.equal(hlp.addMarkdownSyntax([["test"]], [4]), "| test |");
         });
@@ -48,7 +48,7 @@ suite('Helper Tests', () => {
             let actual = hlp.addMarkdownSyntax(rows, colWidths);
             assert.deepEqual(actual, expected);
         });
-        
+
     });
 
 
@@ -65,7 +65,7 @@ suite('Helper Tests', () => {
             assert.deepEqual(hlp.calculateAlignmentMarkdownSyntaxMetadata('c'), { prefix: ':', postfix: ':', adjust: 2 });
             assert.deepEqual(hlp.calculateAlignmentMarkdownSyntaxMetadata('r'), { prefix: '',  postfix: ':', adjust: 1 });
         });
-        
+
         test('should get default let-aligned markdown syntax for non-valid alignment characters', () => {
             assert.deepEqual(hlp.calculateAlignmentMarkdownSyntaxMetadata('x'), { prefix: '', postfix: '', adjust: 0 });
             assert.deepEqual(hlp.calculateAlignmentMarkdownSyntaxMetadata('?'), { prefix: '', postfix: '', adjust: 0 });
@@ -89,6 +89,33 @@ suite('Helper Tests', () => {
                 colAlignments: ['l', 'c', 'r', 'l']
             }
             assert.deepEqual(hlp.getColumnWidthsAndAlignments(rows), expected);
+        });
+    });
+
+    suite('columnAlignment', () => {
+        test('should get correct alignment for valid alignment characters', () => {
+            assert.equal(hlp.columnAlignment('^ltext'), 'l');
+            assert.equal(hlp.columnAlignment('^ctext'), 'c');
+            assert.equal(hlp.columnAlignment('^rtext'), 'r');
+
+        });
+
+        test('should get default left alignment for non-valid alignment characters', () => {
+            assert.equal(hlp.columnAlignment('^xtext'), 'l');
+            assert.equal(hlp.columnAlignment('^?text'), 'l');
+        });
+    });
+
+    suite('columnAlignmentFromChar', () => {
+        test('should get correct alignment character for valid input', () => {
+            assert.equal(hlp.columnAlignmentFromChar('l'), 'l');
+            assert.equal(hlp.columnAlignmentFromChar('c'), 'c');
+            assert.equal(hlp.columnAlignmentFromChar('r'), 'r');
+        });
+
+        test('should get default left alignment for non valid input', () => {
+            assert.equal(hlp.columnAlignmentFromChar('x'), 'l');
+            assert.equal(hlp.columnAlignmentFromChar('?'), 'l');
         });
     });
 
