@@ -11,14 +11,14 @@ import * as assert from 'assert';
 import * as emt from '../excel-markdown-tables';
 
 // Defines a Mocha test suite to group tests of similar kind together
-suite("Excel Markdown tables API Tests", () => {
+describe("Excel Markdown tables API Tests", () => {
 
-    test("excelToMarkdown", () => {
+    it("excelToMarkdown", () => {
         assert.equal(emt.excelToMarkdown("test"), "| test |\n|------|");
         assert.equal(emt.excelToMarkdown("one\ttwo\r\nthree"),"| one   | two |\n|-------|-----|\n| three |");
     });
 
-    test("excelToMarkdown - Alignment", () => {
+    it("excelToMarkdown - Alignment", () => {
         assert.equal(emt.excelToMarkdown("^rtest"), "| test |\n|-----:|");
         assert.equal(emt.excelToMarkdown("^ctest"), "| test |\n|:----:|");
         assert.equal(emt.excelToMarkdown("^ltest"), "| test |\n|------|");
