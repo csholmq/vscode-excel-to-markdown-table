@@ -81,9 +81,8 @@ export function getColumnWidthsAndAlignments(rows: string[][]) : TableSizeMetada
             column = column.replace(COLUMN_ALIGNMENT_REGEX, "");
             rows[0][columnIndex] = column;
             
-            // Return max width to support all columns for the entire table
-            // Applied across all rows
-            // TODO: Refactor the above to separate steps to make the intent clearer
+            // Return max width for this column at columnIndex to
+            // support all rows in the table
             return columnWidth(rows, columnIndex);
         }),
         colAlignments: colAlignments

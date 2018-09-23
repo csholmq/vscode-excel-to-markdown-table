@@ -5,6 +5,6 @@ export interface TableCellAlignment {
 }
 
 export interface TableSizeMetadata {
-    columnWidths:number[],
+    columnWidths: number[],
     colAlignments: string[]
 }
