@@ -52,8 +52,8 @@ describe('Helper Tests', () => {
     });
 
 
-    describe('addAligmnetSyntax', () => {
-        it("addAligmnetSyntax", () => {
+    describe('addAlignmentSyntax', () => {
+        it("addAlignmentSyntax", () => {
             assert.deepEqual(hlp.addAlignmentSyntax(["test"], [5], []), [ 'test', '|-------|' ]);
         });
     });
