@@ -12,6 +12,7 @@ Extension is only first activated when editing a Markdown document. You will nee
 
 ## Contributors
 * @deshorsley for bug fix and test coverage!
+* @tylerhaigh for refactoring and test coverage!
 
 ## Known Issues
 * Does not handle newlines within cells
