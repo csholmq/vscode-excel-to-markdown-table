@@ -14,16 +14,25 @@
         "Other"
     ],
     "activationEvents": [
-        "onLanguage:markdown"
+        "onLanguage:markdown",
+        "onLanguage:feature"
     ],
     "main": "./out/extension",
     "contributes": {
-        "keybindings": {
-            "key": "shift+alt+v",
-            "command": "extension.excelToMarkdown",
-            "title": "Excel to Markdown table",
-            "when": "editorLangId == 'markdown'"
-        },
+        "keybindings": [
+            {
+                "key": "shift+alt+v",
+                "command": "extension.excelToMarkdown",
+                "title": "Excel to Markdown table",
+                "when": "editorLangId == 'markdown'"
+            },
+            {
+                "key": "shift+alt+v",
+                "command": "extension.excelToMarkdown",
+                "title": "Excel to feature table",
+                "when": "editorLangId == 'feature'"
+            }
+        ],
         "commands": {
             "command": "extension.excelToMarkdown",
             "title": "Excel to Markdown table"
