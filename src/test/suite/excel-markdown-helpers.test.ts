@@ -1,8 +1,8 @@
 
 import * as assert from 'assert';
 
-import * as hlp from '../excel-markdown-helpers';
-import { TableSizeMetadata } from '../interfaces';
+import * as hlp from '../../excel-markdown-helpers';
+import { TableSizeMetadata } from '../../interfaces';
 
 describe('Helper Tests', () => {
     describe('columnWidth', () => {
