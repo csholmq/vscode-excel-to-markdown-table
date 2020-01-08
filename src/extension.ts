@@ -41,10 +41,6 @@ function pasteText(rawData: string) {
 
     let paste = excelToMarkdown(rawData);
 
-    // Copy formatted data to clipboard before calling normal paste action
-    // Afterwards, replace clipboard data with original content
-    clipboard.copy(paste, function () {
-        vscode.commands.executeCommand('editor.action.clipboardPasteAction');
-        clipboard.copy(rawData);
-    });
+    let editor = vscode.window.activeTextEditor;
+    editor.edit(_ => _.replace(editor.selection, paste));
 }
