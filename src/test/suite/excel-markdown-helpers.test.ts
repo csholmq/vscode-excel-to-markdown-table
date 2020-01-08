@@ -119,4 +119,14 @@ describe('Helper Tests', () => {
         });
     });
 
+    describe('replaceIntraCellNewline', () => {
+        it('should replace an intra-cell-newline and unescape a double quotes correctly', () => {
+            let rawData  = '"aaa\tbbb"\tccc\r\n"""dd\nzz"""\t"ee\nff"\t"g"g"';
+            let expected = '"aaa\tbbb"\tccc\r\n"dd<br/>zz"\tee<br/>ff\t"g"g"';
+
+            let actual = hlp.replaceIntraCellNewline(rawData);
+            assert.deepEqual(actual, expected);
+        });
+    });
+
 });

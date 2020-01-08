@@ -8,7 +8,8 @@ const LINE_ENDING = "\n"
  */
 export function excelToMarkdown(rawData: string): string {
     let data = rawData.trim();
-    var rows = helper.splitIntoRowsAndColumns(data);
+    var intraCellNewlineReplacedData = helper.replaceIntraCellNewline(data)
+    var rows = helper.splitIntoRowsAndColumns(intraCellNewlineReplacedData);
     var {columnWidths, colAlignments } = helper.getColumnWidthsAndAlignments(rows);
     const markdownRows = helper.addMarkdownSyntax(rows, columnWidths);
 

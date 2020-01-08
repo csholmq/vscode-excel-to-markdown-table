@@ -5,12 +5,17 @@ const ALIGNED_LEFT = "l";
 const ALIGNED_RIGHT = "r";
 const ALIGNED_CENTER = "c";
 const EXCEL_COLUMN_DELIMITER = "\t";
+const MARKDOWN_NEWLINE = "<br/>";
+const UNESCAPED_DOUBLE_QUOTE = '"';
 
 // UNI_NEXT_LINE = '\u0085'
 // UNI_LINE_SEPARATOR = '\u2028'
 // UNI_PARAGRAPH_SEPARATOR = `\u2029`
 const EXCEL_ROW_DELIMITER_REGEX = /[\n\u0085\u2028\u2029]|\r\n?/g
 const COLUMN_ALIGNMENT_REGEX = /^(\^[lcr])/i;
+const EXCEL_NEWLINE_ESCAPED_CELL_REGEX = /"([^\t]*(?<=[^\r])\n[^\t]*)"/g;
+const EXCEL_NEWLINE_REGEX = /\n/g;
+const EXCEL_DOUBLE_QUOTE_ESCAPED_REGEX = /""/g;
 
 /**
  * Apply markdown syntax to create padded cells for each row of data in the table
@@ -143,4 +148,16 @@ export function splitIntoRowsAndColumns(data: string):string[][] {
     });
 
     return rows;
+}
+
+/**
+ * Replace an intra-cell-newlines
+ * @param data The raw content from the Excel via the clipboard
+ * @see https://github.com/csholmq/vscode-excel-to-markdown-table/issues/3
+ */
+export function replaceIntraCellNewline(data: string):string {
+    let cellReplacer = _ => _.slice(1, -1)
+                             .replace(EXCEL_DOUBLE_QUOTE_ESCAPED_REGEX, UNESCAPED_DOUBLE_QUOTE)
+                             .replace(EXCEL_NEWLINE_REGEX, MARKDOWN_NEWLINE);
+    return data.replace(EXCEL_NEWLINE_ESCAPED_CELL_REGEX, cellReplacer);
 }
