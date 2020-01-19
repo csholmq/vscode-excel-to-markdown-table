@@ -8,7 +8,7 @@
         "url": "https://github.com/csholmq/vscode-excel-to-markdown-table"
     },
     "engines": {
-        "vscode": "^1.19.0"
+        "vscode": "^1.41.0"
     },
     "categories": [
         "Other"
@@ -33,8 +33,8 @@
         "vscode:prepublish": "npm run compile",
         "compile": "tsc -p ./",
         "watch": "tsc -watch -p ./",
-        "postinstall": "node ./node_modules/vscode/bin/install",
-        "test": "npm run compile && node ./node_modules/vscode/bin/test",
+        "pretest": "npm run compile",
+        "test": "node ./out/test/runTest.js",
         "mocha": "./node_modules/.bin/mocha --opts ./src/test/mocha.opts",
         "coverage": "./node_modules/.bin/nyc npm run mocha"
     },
