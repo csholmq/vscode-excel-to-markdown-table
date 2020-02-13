@@ -1,7 +1,7 @@
 import { TableCellAlignment } from './interfaces';
 
 export const ALIGNED_LEFT_SYNTAX: TableCellAlignment = {
-    prefix: "",
+    prefix: ":",
     postfix: "",
     adjust: 0
 }
