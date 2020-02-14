@@ -1,5 +1,5 @@
 import { TableCellAlignment, TableSizeMetadata } from './interfaces'
-import { ALIGNED_LEFT_SYNTAX, ALIGNED_CENTER_SYNTAX, ALIGNED_RIGHT_SYNTAX } from './table-alignment-syntax'
+import { ALIGNED_DEFAULT_SYNTAX, ALIGNED_LEFT_SYNTAX, ALIGNED_CENTER_SYNTAX, ALIGNED_RIGHT_SYNTAX } from './table-alignment-syntax'
 
 const ALIGNED_LEFT = "l";
 const ALIGNED_RIGHT = "r";
@@ -62,10 +62,11 @@ export function addAlignmentSyntax(markdownRows: string[], columnWidths: number[
 export function calculateAlignmentMarkdownSyntaxMetadata(alignment: string) : TableCellAlignment {
     
     switch (alignment) {
+        case ALIGNED_DEFAULT: return ALIGNED_DEFAULT_SYNTAX
         case ALIGNED_LEFT: return ALIGNED_LEFT_SYNTAX
         case ALIGNED_CENTER: return ALIGNED_CENTER_SYNTAX
         case ALIGNED_RIGHT: return ALIGNED_RIGHT_SYNTAX
-        default: return ALIGNED_LEFT_SYNTAX
+        default: return ALIGNED_DEFAULT_SYNTAX
     }
 }
 
@@ -108,7 +109,7 @@ export function columnAlignment(columnHeaderText: string): string {
     }
 
     // Default to left alignment
-    return ALIGNED_LEFT;
+    return ALIGNED_DEFAULT;
 }
 
 /**
@@ -117,10 +118,11 @@ export function columnAlignment(columnHeaderText: string): string {
  */
 export function columnAlignmentFromChar(alignChar: string) {
     switch (alignChar) {
+        case ALIGNED_DEFAULT: return ALIGNED_DEFAULT;
         case ALIGNED_LEFT: return ALIGNED_LEFT;
         case ALIGNED_CENTER: return ALIGNED_CENTER;
         case ALIGNED_RIGHT: return ALIGNED_RIGHT;
-        default: return ALIGNED_LEFT
+        default: return ALIGNED_DEFAULT
     }
 }
 
