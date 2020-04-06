@@ -14,6 +14,7 @@
         "Other"
     ],
     "activationEvents": [
+        "onCommand:extension.excelToMarkdown",
         "onLanguage:markdown"
     ],
     "main": "./out/extension",

@@ -1,6 +1,9 @@
 # Change Log
 All notable changes to the "excel-to-markdown-table" extension will be documented in this file.
 
+## [1.2.1] - 2020-04-06
+- Fixed bug with extension not auto-loading upon calling it
+
 ## [1.2.0] - 2020-01-19
 - Adds support for newlines within cells
 
