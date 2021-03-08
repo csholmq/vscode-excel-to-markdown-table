@@ -14,12 +14,9 @@ import {excelToMarkdown} from './excel-markdown-tables'
  * @param context
  */
 export function activate(context: vscode.ExtensionContext) {
-    var disposable = vscode.commands.registerCommand('extension.excelToMarkdown', () => {
-        let clipboard = require('copy-paste');
-
-        clipboard.paste(function(err, val) {
-            pasteText(val);
-        });
+    var disposable = vscode.commands.registerCommand('extension.excelToMarkdown', async () => {
+        const text = await vscode.env.clipboard.readText();
+        pasteText(text);
     });
 
     context.subscriptions.push(disposable);
@@ -37,7 +34,6 @@ export function deactivate() {
  * @param rawData The raw clipboard contents containing the excel table to convert
  */
 function pasteText(rawData: string) {
-    let clipboard = require('copy-paste');
 
     let paste = excelToMarkdown(rawData);
 
