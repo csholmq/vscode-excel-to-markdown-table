@@ -12,6 +12,7 @@ Based on https://github.com/thisdavej/copy-excel-paste-markdown and the work of 
 * @deshorsley for bug fix and test coverage!
 * @tylerhaigh for refactoring and test coverage!
 * @usagi for new line handling and refactoring!
+* @trackds for migrating to internal VSCode clipboard API
 
 ## Known Issues
 * None

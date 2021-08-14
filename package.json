@@ -8,7 +8,7 @@
         "url": "https://github.com/csholmq/vscode-excel-to-markdown-table"
     },
     "engines": {
-        "vscode": "^1.41.0"
+        "vscode": "^1.59.0"
     },
     "categories": [
         "Other"
