@@ -1,4 +1,4 @@
-import { TableCellAlignment, TableSizeMetadata } from './interfaces'
+import { TableCellAlignment, TableSizeMetadata } from './interfaces'
 import { ALIGNED_LEFT_SYNTAX, ALIGNED_CENTER_SYNTAX, ALIGNED_RIGHT_SYNTAX } from './table-alignment-syntax'
 
 const ALIGNED_LEFT = "l";
@@ -24,14 +24,9 @@ const EXCEL_DOUBLE_QUOTE_ESCAPED_REGEX = /""/g;
  */
 export function addMarkdownSyntax(rows: string[][], columnWidths: number[]) {
     return rows.map(function (row, rowIndex) {
-        // | Name         | Title | Email Address  |
-        // |--------------|-------|----------------|
-        // | Jane Atler   | CEO   | jane@acme.com  |
-        // | John Doherty | CTO   | john@acme.com  |
-        // | Sally Smith  | CFO   | sally@acme.com |
-        return "| " + row.map(function (column, index) {
-            // Create a padded string from the cell content
-            return column + Array(columnWidths[index] - column.length + 1).join(" ");
+        return "| " + columnWidths.map(function (width, index) {
+            const cell = (row[index] !== undefined) ? row[index] : "";
+            return cell + " ".repeat(width - cell.length);
         }).join(" | ") + " |";
     });
 }
@@ -43,14 +38,12 @@ export function addMarkdownSyntax(rows: string[][], columnWidths: number[]) {
  * @param colAlignments Alignments for each cell's text (l = left, c = center, r = right)
  */
 export function addAlignmentSyntax(markdownRows: string[], columnWidths: number[], colAlignments: string[]):string[] {
-    // Deepcopy: https://stackoverflow.com/questions/35504310/deep-copy-an-array-in-angular-2-typescript#35504348
-    let result = Object.assign([], markdownRows);
-    
-    // Insert the markdown alignment syntax as second row in the output table
+    const result = [...markdownRows];
+
     result.splice(1, 0,
         "|" + columnWidths.map(function (width, index) {
-            let {prefix, postfix, adjust} = calculateAlignmentMarkdownSyntaxMetadata(colAlignments[index]);
-            return prefix + Array(columnWidths[index] + 3 - adjust).join("-") + postfix;
+            const {prefix, postfix, adjust} = calculateAlignmentMarkdownSyntaxMetadata(colAlignments[index]);
+            return prefix + "-".repeat(width + 2 - adjust) + postfix;
         }).join("|") + "|");
     return result;
 }
@@ -60,7 +53,7 @@ export function addAlignmentSyntax(markdownRows: string[], columnWidths: number[
  * @param alignment The cell text alignment (l = left, c = center, r = right)
  */
 export function calculateAlignmentMarkdownSyntaxMetadata(alignment: string) : TableCellAlignment {
-    
+
     switch (alignment) {
         case ALIGNED_LEFT: return ALIGNED_LEFT_SYNTAX
         case ALIGNED_CENTER: return ALIGNED_CENTER_SYNTAX
@@ -75,19 +68,17 @@ export function calculateAlignmentMarkdownSyntaxMetadata(alignment: string) : Ta
  * @param rows Table of data from Excel
  */
 export function getColumnWidthsAndAlignments(rows: string[][]) : TableSizeMetadata {
-    let colAlignments: string[]=[];
+    const colAlignments: string[]=[];
+    const headerRow = [...rows[0]];
     return {
-        columnWidths: rows[0].map(function (column, columnIndex) {
-            // Derive column alignment from excel column header text
-            let alignment = columnAlignment(column);
+        columnWidths: headerRow.map(function (column, columnIndex) {
+            const alignment = columnAlignment(column);
             colAlignments.push(alignment);
-            
-            // Replace header text with unaligned header text
-            column = column.replace(COLUMN_ALIGNMENT_REGEX, "");
-            rows[0][columnIndex] = column;
-            
-            // Return max width for this column at columnIndex to
-            // support all rows in the table
+
+            // Strip alignment prefix from header text
+            const cleanedColumn = column.replace(COLUMN_ALIGNMENT_REGEX, "");
+            rows[0][columnIndex] = cleanedColumn;
+
             return columnWidth(rows, columnIndex);
         }),
         colAlignments: colAlignments
@@ -99,15 +90,14 @@ export function getColumnWidthsAndAlignments(rows: string[][]) : TableSizeMetada
  * @param columnHeaderText The original Excel column header text
  */
 export function columnAlignment(columnHeaderText: string): string {
-            
-    var m = columnHeaderText.match(COLUMN_ALIGNMENT_REGEX);
+
+    const m = columnHeaderText.match(COLUMN_ALIGNMENT_REGEX);
 
     if (m) {
-        var alignChar = m[1][1].toLowerCase();
+        const alignChar = m[1][1].toLowerCase();
         return columnAlignmentFromChar(alignChar);
     }
 
-    // Default to left alignment
     return ALIGNED_LEFT;
 }
 
@@ -141,9 +131,7 @@ export function columnWidth(rows: string[][], columnIndex: number) : number{
  * @param data The raw content from the clipboard
  */
 export function splitIntoRowsAndColumns(data: string):string[][] {
-    // Split rows on newline
-    var rows = data.split(EXCEL_ROW_DELIMITER_REGEX).map(function (row) {
-        // Split columns on tab
+    const rows = data.split(EXCEL_ROW_DELIMITER_REGEX).map(function (row) {
         return row.split(EXCEL_COLUMN_DELIMITER);
     });
 
@@ -156,8 +144,8 @@ export function splitIntoRowsAndColumns(data: string):string[][] {
  * @see https://github.com/csholmq/vscode-excel-to-markdown-table/issues/3
  */
 export function replaceIntraCellNewline(data: string):string {
-    let cellReplacer = _ => _.slice(1, -1)
-                             .replace(EXCEL_DOUBLE_QUOTE_ESCAPED_REGEX, UNESCAPED_DOUBLE_QUOTE)
-                             .replace(EXCEL_NEWLINE_REGEX, MARKDOWN_NEWLINE);
+    const cellReplacer = (_match: string, group: string) =>
+        group.replace(EXCEL_DOUBLE_QUOTE_ESCAPED_REGEX, UNESCAPED_DOUBLE_QUOTE)
+             .replace(EXCEL_NEWLINE_REGEX, MARKDOWN_NEWLINE);
     return data.replace(EXCEL_NEWLINE_ESCAPED_CELL_REGEX, cellReplacer);
 }
