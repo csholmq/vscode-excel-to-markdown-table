@@ -13,8 +13,9 @@ const UNESCAPED_DOUBLE_QUOTE = '"';
 // UNI_PARAGRAPH_SEPARATOR = `\u2029`
 const EXCEL_ROW_DELIMITER_REGEX = /[\n\u0085\u2028\u2029]|\r\n?/g
 const COLUMN_ALIGNMENT_REGEX = /^(\^[lcr])/i;
-const EXCEL_NEWLINE_ESCAPED_CELL_REGEX = /"([^\t]*(?<=[^\r])\n[^\t]*)"/g;
+const EXCEL_NEWLINE_ESCAPED_CELL_REGEX = /"([^\t]*\n[^\t]*)"/g;
 const EXCEL_NEWLINE_REGEX = /\n/g;
+const CRLF_REGEX = /\r\n/g;
 const EXCEL_DOUBLE_QUOTE_ESCAPED_REGEX = /""/g;
 
 /**
@@ -144,8 +145,11 @@ export function splitIntoRowsAndColumns(data: string):string[][] {
  * @see https://github.com/csholmq/vscode-excel-to-markdown-table/issues/3
  */
 export function replaceIntraCellNewline(data: string):string {
+    const CRLF_PLACEHOLDER = '\x00';
     const cellReplacer = (_match: string, group: string) =>
         group.replace(EXCEL_DOUBLE_QUOTE_ESCAPED_REGEX, UNESCAPED_DOUBLE_QUOTE)
-             .replace(EXCEL_NEWLINE_REGEX, MARKDOWN_NEWLINE);
+             .replace(CRLF_REGEX, CRLF_PLACEHOLDER)
+             .replace(EXCEL_NEWLINE_REGEX, MARKDOWN_NEWLINE)
+             .replace(/\x00/g, '\r\n');
     return data.replace(EXCEL_NEWLINE_ESCAPED_CELL_REGEX, cellReplacer);
 }
