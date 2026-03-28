@@ -13,22 +13,22 @@
     "categories": [
         "Other"
     ],
-    "activationEvents": [
-        "onCommand:extension.excelToMarkdown",
-        "onLanguage:markdown"
-    ],
+    "activationEvents": [],
     "main": "./out/extension",
     "contributes": {
-        "keybindings": {
-            "key": "shift+alt+v",
-            "command": "extension.excelToMarkdown",
-            "title": "Excel to Markdown table",
-            "when": "editorLangId == 'markdown'"
-        },
-        "commands": {
-            "command": "extension.excelToMarkdown",
-            "title": "Excel to Markdown table"
-        }
+        "keybindings": [
+            {
+                "key": "shift+alt+v",
+                "command": "extension.excelToMarkdown",
+                "when": "editorLangId == 'markdown'"
+            }
+        ],
+        "commands": [
+            {
+                "command": "extension.excelToMarkdown",
+                "title": "Excel to Markdown table"
+            }
+        ]
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",
@@ -37,20 +37,19 @@
         "pretest": "npm run compile",
         "test": "node ./out/test/runTest.js",
         "mocha": "./node_modules/.bin/mocha --opts ./src/test/mocha.opts",
-        "coverage": "./node_modules/.bin/nyc npm run mocha"
+        "coverage": "./node_modules/.bin/c8 npm run mocha"
     },
     "devDependencies": {
-        "@types/mocha": "^5.2.7",
-        "@types/node": "^13.13.52",
+        "@types/mocha": "^10.0.0",
+        "@types/node": "^20.0.0",
         "@types/vscode": "^1.59.0",
-        "nyc": "^15.1.0",
+        "@vscode/test-electron": "^2.3.0",
+        "c8": "^9.1.0",
         "source-map-support": "^0.5.19",
-        "ts-node": "^8.10.2",
-        "typescript": "^3.9.10",
-        "vscode-test": "^1.6.1"
+        "ts-node": "^10.9.0",
+        "typescript": "^5.3.0"
     },
-    "dependencies": {},
-    "nyc": {
+    "c8": {
         "extension": [
             ".ts",
             ".tsx"
