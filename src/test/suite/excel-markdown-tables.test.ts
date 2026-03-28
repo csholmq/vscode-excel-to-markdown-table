@@ -47,4 +47,15 @@ describe("Excel Markdown tables API Tests", () => {
             "| header          |\n|-----------------|\n| line1<br/>line2 |"
         );
     });
+
+    it("excelToMarkdown - escapes pipe characters in cell content", () => {
+        assert.equal(
+            emt.excelToMarkdown("name\tvalue\r\na|b\tc"),
+            "| name  | value |\n|-------|-------|\n| a\\|b | c     |"
+        );
+        assert.equal(
+            emt.excelToMarkdown("a|b|c"),
+            "| a\\|b\\|c |\n|---------|"
+        );
+    });
 });
