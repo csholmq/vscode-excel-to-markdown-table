@@ -7,7 +7,7 @@ const LINE_ENDING = "\n"
  * @param rawData A table-like string
  */
 export function excelToMarkdown(rawData: string): string {
-    const data = rawData.trim();
+    const data = rawData.replace(/^[^\S\t]+|[^\S\t]+$/g, '');
     const intraCellNewlineReplacedData = helper.replaceIntraCellNewline(data)
     const rows = helper.splitIntoRowsAndColumns(intraCellNewlineReplacedData)
         .map(row => row.map(cell => cell.replace(/\|/g, '\\|')));

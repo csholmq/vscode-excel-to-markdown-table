@@ -51,11 +51,18 @@ describe("Excel Markdown tables API Tests", () => {
     it("excelToMarkdown - escapes pipe characters in cell content", () => {
         assert.equal(
             emt.excelToMarkdown("name\tvalue\r\na|b\tc"),
-            "| name  | value |\n|-------|-------|\n| a\\|b | c     |"
+            "| name | value |\n|------|-------|\n| a\\|b | c     |"
         );
         assert.equal(
             emt.excelToMarkdown("a|b|c"),
             "| a\\|b\\|c |\n|---------|"
+        );
+    });
+
+    it("excelToMarkdown - empty first header column (issue #36)", () => {
+        assert.equal(
+            emt.excelToMarkdown("\tcol2\tcol3\r\nval1\tval2\tval3"),
+            "|      | col2 | col3 |\n|------|------|------|\n| val1 | val2 | val3 |"
         );
     });
 });
