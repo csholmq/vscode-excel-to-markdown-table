@@ -220,6 +220,10 @@ describe('Helper Tests', () => {
         it('should leave data without intra-cell newlines unchanged', () => {
             assert.equal(hlp.replaceIntraCellNewline('plain\tdata'), 'plain\tdata');
         });
+
+        it('should handle newline at start of cell content', () => {
+            assert.equal(hlp.replaceIntraCellNewline('"\nfoo"'), '<br/>foo');
+        });
     });
 
 });
