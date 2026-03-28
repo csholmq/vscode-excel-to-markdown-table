@@ -12,6 +12,17 @@ describe('Helper Tests', () => {
             assert.equal(hlp.columnWidth(row, 0), 5);
             assert.equal(hlp.columnWidth(row, 1), 6);
         });
+
+        it("should return 0 for a column index beyond the row length", () => {
+            const rows = [["a"], ["b"]];
+            assert.equal(hlp.columnWidth(rows, 1), 0);
+        });
+
+        it("should return max width across multiple rows", () => {
+            const rows = [["short", "x"], ["longervalue", "yy"]];
+            assert.equal(hlp.columnWidth(rows, 0), 11);
+            assert.equal(hlp.columnWidth(rows, 1), 2);
+        });
     });
 
     describe('splitIntoRowsAndColumns', () => {
@@ -20,18 +31,38 @@ describe('Helper Tests', () => {
             assert.deepEqual(hlp.splitIntoRowsAndColumns("first\tsecond\t\t"), [["first", "second", "", ""]], "Should add empty tabs as columns");
             assert.deepEqual(hlp.splitIntoRowsAndColumns("first\tsecond\r\nnew\trow"),[["first","second"],["new","row"]]);
         });
+
+        it("should split on \\n line endings", () => {
+            assert.deepEqual(hlp.splitIntoRowsAndColumns("a\tb\nc\td"), [["a","b"],["c","d"]]);
+        });
+
+        it("should split on \\r line endings", () => {
+            assert.deepEqual(hlp.splitIntoRowsAndColumns("a\tb\rc\td"), [["a","b"],["c","d"]]);
+        });
+
+        it("should split on Unicode next line (\\u0085)", () => {
+            assert.deepEqual(hlp.splitIntoRowsAndColumns("a\tb\u0085c\td"), [["a","b"],["c","d"]]);
+        });
+
+        it("should split on Unicode line separator (\\u2028)", () => {
+            assert.deepEqual(hlp.splitIntoRowsAndColumns("a\tb\u2028c\td"), [["a","b"],["c","d"]]);
+        });
+
+        it("should split on Unicode paragraph separator (\\u2029)", () => {
+            assert.deepEqual(hlp.splitIntoRowsAndColumns("a\tb\u2029c\td"), [["a","b"],["c","d"]]);
+        });
     });
 
 
     describe("addMarkdownSyntax", () => {
 
         it('should generate header for single column', () => {
-            assert.equal(hlp.addMarkdownSyntax([["test"]], [4]), "| test |");
+            assert.deepEqual(hlp.addMarkdownSyntax([["test"]], [4]), ["| test |"]);
         });
 
         it('should generate header for multiple columns', () => {
-            assert.equal(hlp.addMarkdownSyntax([["test", "column2"]], [4, 7]), "| test | column2 |");
-            assert.equal(hlp.addMarkdownSyntax([["test", "column2", "x"]], [4, 7, 1]), "| test | column2 | x |");
+            assert.deepEqual(hlp.addMarkdownSyntax([["test", "column2"]], [4, 7]), ["| test | column2 |"]);
+            assert.deepEqual(hlp.addMarkdownSyntax([["test", "column2", "x"]], [4, 7, 1]), ["| test | column2 | x |"]);
         });
 
         it('should generate header for multiple rows and columns', () => {
@@ -49,12 +80,61 @@ describe('Helper Tests', () => {
             assert.deepEqual(actual, expected);
         });
 
+        it('should handle rows with fewer columns than header', () => {
+            let rows = [
+                ["col1", "col2", "col3"],
+                ["a", "b"]
+            ];
+            let colWidths = [4, 4, 4];
+            let expected = [
+                "| col1 | col2 | col3 |",
+                "| a    | b    |      |"
+            ];
+
+            let actual = hlp.addMarkdownSyntax(rows, colWidths);
+            assert.deepEqual(actual, expected);
+        });
+
+        it('should handle completely empty short rows', () => {
+            let rows = [
+                ["col1", "col2"],
+                []
+            ];
+            let colWidths = [4, 4];
+            let expected = [
+                "| col1 | col2 |",
+                "|      |      |"
+            ];
+
+            let actual = hlp.addMarkdownSyntax(rows, colWidths);
+            assert.deepEqual(actual, expected);
+        });
+
     });
 
 
     describe('addAlignmentSyntax', () => {
-        it("addAlignmentSyntax", () => {
+        it("should add left-aligned separator by default", () => {
             assert.deepEqual(hlp.addAlignmentSyntax(["test"], [5], []), [ 'test', '|-------|' ]);
+        });
+
+        it("should add left-aligned separator", () => {
+            assert.deepEqual(hlp.addAlignmentSyntax(["| head |"], [4], ['l']), [ '| head |', '|------|' ]);
+        });
+
+        it("should add center-aligned separator", () => {
+            assert.deepEqual(hlp.addAlignmentSyntax(["| head |"], [4], ['c']), [ '| head |', '|:----:|' ]);
+        });
+
+        it("should add right-aligned separator", () => {
+            assert.deepEqual(hlp.addAlignmentSyntax(["| head |"], [4], ['r']), [ '| head |', '|-----:|' ]);
+        });
+
+        it("should handle multiple columns with mixed alignments", () => {
+            assert.deepEqual(
+                hlp.addAlignmentSyntax(["| a | b | c |"], [3, 3, 3], ['l', 'c', 'r']),
+                [ '| a | b | c |', '|-----|:---:|----:|' ]
+            );
         });
     });
 
@@ -120,12 +200,25 @@ describe('Helper Tests', () => {
     });
 
     describe('replaceIntraCellNewline', () => {
-        it('should replace an intra-cell-newline and unescape a double quotes correctly', () => {
+        it('should replace an intra-cell-newline and unescape double quotes correctly', () => {
             let rawData  = '"aaa\tbbb"\tccc\r\n"""dd\nzz"""\t"ee\nff"\t"g"g"';
             let expected = '"aaa\tbbb"\tccc\r\n"dd<br/>zz"\tee<br/>ff\t"g"g"';
 
             let actual = hlp.replaceIntraCellNewline(rawData);
             assert.deepEqual(actual, expected);
+        });
+
+        it('should handle multiple newlines within a single cell', () => {
+            assert.equal(hlp.replaceIntraCellNewline('"a\nb\nc"'), 'a<br/>b<br/>c');
+        });
+
+        it('should handle cells with only double-quote escaping and no newline', () => {
+            // No newline inside quotes means the regex won't match — passes through unchanged
+            assert.equal(hlp.replaceIntraCellNewline('"""hello"""'), '"""hello"""');
+        });
+
+        it('should leave data without intra-cell newlines unchanged', () => {
+            assert.equal(hlp.replaceIntraCellNewline('plain\tdata'), 'plain\tdata');
         });
     });
 
