@@ -1,6 +1,15 @@
 # Change Log
 All notable changes to the "excel-to-markdown-table" extension will be documented in this file.
 
+## [1.4.0] - 2026-03-29
+- Escape pipe characters in cell content
+- Fix empty header column being stripped by trim()
+- Remove lookbehind regex for Safari/iOS compatibility
+- Improve test coverage across all helper functions
+
+## [1.3.0] - 2021-09-20
+- Fix Remote Workspace unable to get clipboard data (@trackds)
+
 ## [1.2.1] - 2020-04-06
 - Fixed bug with extension not auto-loading upon calling it
 
